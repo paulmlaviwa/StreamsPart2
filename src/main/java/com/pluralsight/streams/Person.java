@@ -58,23 +58,22 @@ public class Person {
             System.out.println("No matching people found.");
         } else {
             System.out.println("Matching people:");
-            for (Person person : matchingPeople) {
-                System.out.println(person.firstName + " " + person.lastName);
-            }
+            matchingPeople.forEach(person -> System.out.println(person.firstName + " " + person.lastName));
         }
 
-        // Calculating average age using Java Streams
+        // Average age
         double averageAge = people.stream()
                 .mapToInt(Person::getAge)
                 .average()
                 .orElse(0);
 
-        // Find oldest and youngest age using Java Streams
+        // Oldest person's age
         int oldestAge = people.stream()
                 .mapToInt(Person::getAge)
                 .max()
                 .orElse(0);
 
+        // Youngest person's age
         int youngestAge = people.stream()
                 .mapToInt(Person::getAge)
                 .min()
