@@ -2,7 +2,6 @@ package com.pluralsight.streams;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -17,38 +16,19 @@ public class Person {
         this.age = age;
     }
 
-    // Getter method for age
-    public int getAge() {
-        return age;
-    }
-
-    private static List<Person> createRandomPeopleList(int numberOfPeople) {
-        List<Person> people = new ArrayList<>();
-        Random random = new Random();
-
+    public static void main(String[] args) {
         String[] firstNames = {"Alice", "Bob", "Charlie", "David", "Emma", "Frank", "Grace", "Henry", "Ivy", "Jack"};
         String[] lastNames = {"Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"};
+        int[] ages = {23, 34, 12, 16, 33, 15, 70, 19, 29, 30};
 
-        for (int i = 0; i < numberOfPeople; i++) {
-            String firstName = firstNames[random.nextInt(firstNames.length)];
-            String lastName = lastNames[random.nextInt(lastNames.length)];
-            int age = random.nextInt(40) + 20; // Random age between 20 and 59
-
-            people.add(new Person(firstName, lastName, age));
-        }
-
-        return people;
-    }
-
-    public static void main(String[] args) {
-        List<Person> people = createRandomPeopleList(10);
+        List<Person> people = createPeopleList(firstNames, lastNames, ages);
         Scanner scanner = new Scanner(System.in);
 
         // Prompting user for a search name
         System.out.print("Enter a name to search: ");
         String searchName = scanner.nextLine();
 
-        // Finding matching names using Java Streams
+        // Finding matching names using
         List<Person> matchingPeople = people.stream()
                 .filter(person -> person.firstName.equalsIgnoreCase(searchName) || person.lastName.equalsIgnoreCase(searchName))
                 .collect(Collectors.toList());
@@ -61,21 +41,21 @@ public class Person {
             matchingPeople.forEach(person -> System.out.println(person.firstName + " " + person.lastName));
         }
 
-        // Average age
+        // Calculating average age using Java Streams
         double averageAge = people.stream()
-                .mapToInt(Person::getAge)
+                .mapToInt(person -> person.age)
                 .average()
                 .orElse(0);
 
-        // Oldest person's age
+        // Finding the age of the oldest person
         int oldestAge = people.stream()
-                .mapToInt(Person::getAge)
+                .mapToInt(person -> person.age)
                 .max()
                 .orElse(0);
 
-        // Youngest person's age
+        // Finding the age of the youngest person
         int youngestAge = people.stream()
-                .mapToInt(Person::getAge)
+                .mapToInt(person -> person.age)
                 .min()
                 .orElse(0);
 
@@ -83,5 +63,15 @@ public class Person {
         System.out.println("Average age: " + averageAge);
         System.out.println("Oldest person's age: " + oldestAge);
         System.out.println("Youngest person's age: " + youngestAge);
+    }
+
+    private static List<Person> createPeopleList(String[] firstNames, String[] lastNames, int[] ages) {
+        List<Person> people = new ArrayList<>();
+
+        for (int i = 0; i < firstNames.length; i++) {
+            people.add(new Person(firstNames[i], lastNames[i], ages[i]));
+        }
+
+        return people;
     }
 }
