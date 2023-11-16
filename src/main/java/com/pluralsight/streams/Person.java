@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Person {
     String firstName;
@@ -16,51 +17,9 @@ public class Person {
         this.age = age;
     }
 
-    public static void main(String[] args) {
-        List<Person> people = createRandomPeopleList(10);
-        Scanner scanner = new Scanner(System.in);
-
-        // Prompting user for a search name
-        System.out.print("Enter a name to search: ");
-        String searchName = scanner.nextLine();
-
-        // Finding matching names
-        List<Person> matchingPeople = new ArrayList<>();
-        for (Person person : people) {
-            if (person.firstName.equalsIgnoreCase(searchName) || person.lastName.equalsIgnoreCase(searchName)) {
-                matchingPeople.add(person);
-            }
-        }
-
-        System.out.println("Matching people:");
-        for (Person person : matchingPeople) {
-            System.out.println(person.firstName + " " + person.lastName);
-        }
-
-        // Average, oldest, and youngest age
-        int totalAge = 0;
-        int oldestAge = Integer.MIN_VALUE; //Initialized to the smallest possible integer value
-        int youngestAge = Integer.MAX_VALUE; //Initialized to the largest possible integer value
-
-        for (Person person : people) {
-            totalAge += person.age;
-
-            if (person.age > oldestAge) {
-                oldestAge = person.age;
-            }
-
-            if (person.age < youngestAge) {
-                youngestAge = person.age;
-            }
-        }
-
-        // Average age
-        double averageAge = (double) totalAge / people.size();
-
-        // Display results
-        System.out.println("Average age: " + averageAge);
-        System.out.println("Oldest person's age: " + oldestAge);
-        System.out.println("Youngest person's age: " + youngestAge);
+    // Getter method for age
+    public int getAge() {
+        return age;
     }
 
     private static List<Person> createRandomPeopleList(int numberOfPeople) {
@@ -79,5 +38,51 @@ public class Person {
         }
 
         return people;
+    }
+
+    public static void main(String[] args) {
+        List<Person> people = createRandomPeopleList(10);
+        Scanner scanner = new Scanner(System.in);
+
+        // Prompting user for a search name
+        System.out.print("Enter a name to search: ");
+        String searchName = scanner.nextLine();
+
+        // Finding matching names using Java Streams
+        List<Person> matchingPeople = people.stream()
+                .filter(person -> person.firstName.equalsIgnoreCase(searchName) || person.lastName.equalsIgnoreCase(searchName))
+                .collect(Collectors.toList());
+
+        // Display matching people
+        if (matchingPeople.isEmpty()) {
+            System.out.println("No matching people found.");
+        } else {
+            System.out.println("Matching people:");
+            for (Person person : matchingPeople) {
+                System.out.println(person.firstName + " " + person.lastName);
+            }
+        }
+
+        // Calculating average age using Java Streams
+        double averageAge = people.stream()
+                .mapToInt(Person::getAge)
+                .average()
+                .orElse(0);
+
+        // Find oldest and youngest age using Java Streams
+        int oldestAge = people.stream()
+                .mapToInt(Person::getAge)
+                .max()
+                .orElse(0);
+
+        int youngestAge = people.stream()
+                .mapToInt(Person::getAge)
+                .min()
+                .orElse(0);
+
+        // Display results
+        System.out.println("Average age: " + averageAge);
+        System.out.println("Oldest person's age: " + oldestAge);
+        System.out.println("Youngest person's age: " + youngestAge);
     }
 }
